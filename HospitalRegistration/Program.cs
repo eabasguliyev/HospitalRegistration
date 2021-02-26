@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
+using System.IO;
 using System.Linq;
 using HospitalRegistration.AbstractClasses;
 using HospitalRegistration.Departments;
@@ -14,75 +16,89 @@ namespace HospitalRegistration
     {
         static void Main(string[] args)
         {
-            var departments = new List<Department>() {
-                new Pediatrics(){ Name = "Pediatrics"},
-                new Traumatology(){ Name = "Traumatology"},
-                new Stamatology(){ Name = "Stamatology"}
-            };
+            List<Department> departments = null;
 
-            departments[0].Doctors.Add(new Doctor()
+
+            var file = "departments.json";
+
+            if(File.Exists(file))
             {
-                Name = "Angela",
-                Surname = "Midkiff",
-                WorkYears = 3
-            });
-
-            departments[0].Doctors.Add(new Doctor()
+                FileHelper.Read(file, ref departments);
+            }
+            else
             {
-                Name = "Norman",
-                Surname = "Burkholder",
-                WorkYears = 5
-            });
+                departments = new List<Department>() {
+                    new Pediatrics(){ Name = "Pediatrics"},
+                    new Traumatology(){ Name = "Traumatology"},
+                    new Stamatology(){ Name = "Stamatology"}
+                };
+                departments[0].Doctors.Add(new Doctor()
+                {
+                    Name = "Angela",
+                    Surname = "Midkiff",
+                    WorkYears = 3
+                });
 
-            departments[0].Doctors.Add(new Doctor()
-            {
-                Name = "Yasmin",
-                Surname = "Borden",
-                WorkYears = 4
-            });
+                departments[0].Doctors.Add(new Doctor()
+                {
+                    Name = "Norman",
+                    Surname = "Burkholder",
+                    WorkYears = 5
+                });
 
-            departments[1].Doctors.Add(new Doctor()
-            {
-                Name = "Gracie",
-                Surname = "Johnson",
-                WorkYears = 6
-            });
+                departments[0].Doctors.Add(new Doctor()
+                {
+                    Name = "Yasmin",
+                    Surname = "Borden",
+                    WorkYears = 4
+                });
 
-            departments[1].Doctors.Add(new Doctor()
-            {
-                Name = "Paul",
-                Surname = "Jones",
-                WorkYears = 8
-            });
+                departments[1].Doctors.Add(new Doctor()
+                {
+                    Name = "Gracie",
+                    Surname = "Johnson",
+                    WorkYears = 6
+                });
 
-            departments[2].Doctors.Add(new Doctor()
-            {
-                Name = "Heather",
-                Surname = "Morton",
-                WorkYears = 5
-            });
+                departments[1].Doctors.Add(new Doctor()
+                {
+                    Name = "Paul",
+                    Surname = "Jones",
+                    WorkYears = 8
+                });
 
-            departments[2].Doctors.Add(new Doctor()
-            {
-                Name = "Pamela",
-                Surname = "Jackson",
-                WorkYears = 4
-            });
+                departments[2].Doctors.Add(new Doctor()
+                {
+                    Name = "Heather",
+                    Surname = "Morton",
+                    WorkYears = 5
+                });
 
-            departments[2].Doctors.Add(new Doctor()
-            {
-                Name = "Anita",
-                Surname = "Winters",
-                WorkYears = 6
-            });
+                departments[2].Doctors.Add(new Doctor()
+                {
+                    Name = "Pamela",
+                    Surname = "Jackson",
+                    WorkYears = 4
+                });
 
-            departments[2].Doctors.Add(new Doctor()
-            {
-                Name = "Catherine",
-                Surname = "Malone",
-                WorkYears = 8
-            });
+                departments[2].Doctors.Add(new Doctor()
+                {
+                    Name = "Anita",
+                    Surname = "Winters",
+                    WorkYears = 6
+                });
 
+                departments[2].Doctors.Add(new Doctor()
+                {
+                    Name = "Catherine",
+                    Surname = "Malone",
+                    WorkYears = 8
+                });
+               
+                FileHelper.Write(file, departments);
+
+            }
+            
             foreach (var department in departments)
             {
                 foreach (var doctor in department.Doctors)
@@ -142,6 +158,8 @@ namespace HospitalRegistration
 
                 while (departmentLoop)
                 {
+                   
+
                     var doctors = departments[mainChoice].Doctors.Select(d => $"{d.Name} {d.Surname}").ToList();
                     doctors.Add("Back");
 
@@ -175,13 +193,17 @@ namespace HospitalRegistration
 
                         var appointment = doctor.Appointments[appointmentChoice];
 
-                        if (doctor.CheckAppoinment(appointmentChoice))
+                        if (doctor.CheckAppointment(appointmentChoice))
                         {
-                            doctor.ReserveAppointment(appointmentChoice);
+                            var fullName = $"{user.Name} {user.Surname}";
+                            doctor.ReserveAppointment(appointmentChoice, fullName);
 
-                            ConsoleLogger.Info($"Thanks {user.Name} {user.Surname} you have signed up for the reception of {doctor.Name} {doctor.Surname} doctor at {appointment.Start}");
+                            ConsoleLogger.Info($"Thanks {fullName} you have signed up for the reception of {doctor.Name} {doctor.Surname} doctor at {appointment.Start}");
                             ConsoleScreen.Clear();
                             departmentLoop = false;
+
+                            FileHelper.Write(file, departments);
+
                             break;
                         }
 

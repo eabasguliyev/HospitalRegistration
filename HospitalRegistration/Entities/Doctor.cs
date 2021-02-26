@@ -18,6 +18,10 @@ namespace HospitalRegistration.Entities
             return $"{base.ToString()}\nWork Years: {WorkYears}";
         }
 
-        public void ReserveAppointment(int appointmentIndex) => Appointments[appointmentIndex].isFull = true;
+        public void ReserveAppointment(int appointmentIndex, string patientName)
+        {
+            Appointments[appointmentIndex].isFull = true;
+            Appointments[appointmentIndex].PatientName = patientName;
+        }
     }
 }

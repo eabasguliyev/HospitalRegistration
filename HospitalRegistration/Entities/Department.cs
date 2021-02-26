@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using HospitalRegistration.Entities;
 
-namespace HospitalRegistration.AbstractClasses
+namespace HospitalRegistration.Entities
 {
-    public abstract class Department
+    public class Department
     {
         public string Name { get; set; }
         public List<Doctor> Doctors { get; private set; }
